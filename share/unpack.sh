@@ -21,7 +21,8 @@ fi
 
 work="$(mktemp -d "$install_dir/.unpack.XXXXXX")"
 trap 'rm -rf "$work"' EXIT
-tar -xzf "${blobs[0]}" -C "$work"
+# "./": GNU tar reads "sha256:..." as host:path (remote archive)
+tar -xzf "./${blobs[0]}" -C "$work"
 
 found=0
 for libdir in "$work"/pgvector/*/lib/postgresql@*; do
