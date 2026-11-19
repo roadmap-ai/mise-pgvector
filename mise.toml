@@ -1,0 +1,23 @@
+[tools]
+"conda:lua" = "5.4.8"  # prebuilt; the registry default (vfox-lua) compiles from source
+stylua = "latest"
+
+[tasks.unit]
+description = "Unit tests for bottle selection (pure Lua)"
+run = "lua tests/bottles_test.lua"
+
+[tasks.e2e]
+description = "Install the plugin into a sandboxed mise and load pgvector into real Postgres 17 and 18"
+run = "tests/e2e.sh"
+
+[tasks.format]
+description = "Format Lua"
+run = "stylua metadata.lua hooks/ lib/ tests/"
+
+[tasks.lint]
+description = "Check Lua formatting"
+run = "stylua --check metadata.lua hooks/ lib/ tests/"
+
+[tasks.ci]
+description = "All checks"
+depends = ["lint", "unit", "e2e"]

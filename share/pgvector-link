@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Symlinks this pgvector install into the Postgres found via `pg_config` on PATH,
+# using the build that matches its major version. Postgres <= 17 only loads
+# extensions from its own pkglibdir/sharedir. Idempotent.
+set -euo pipefail
+
+home="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+if ! command -v pg_config >/dev/null; then
+    echo "pgvector-link: pg_config not found on PATH; install Postgres first" >&2
+    exit 1
+fi
+major="$(pg_config --version | sed -nE 's/^PostgreSQL ([0-9]+).*/\1/p')"
+if [[ ! -d "$home/$major" ]]; then
+    available="$(cd "$home" && ls -d [0-9]* 2>/dev/null | tr '\n' ' ')"
+    echo "pgvector-link: this pgvector has no build for Postgres $major (available: ${available:-none})" >&2
+    exit 1
+fi
+
+libdir="$(pg_config --pkglibdir)"
+extdir="$(pg_config --sharedir)/extension"
+for f in "$home/$major"/lib/*; do
+    ln -sfn "$f" "$libdir/$(basename "$f")"
+done
+for f in "$home/$major"/extension/*; do
+    ln -sfn "$f" "$extdir/$(basename "$f")"
+done
+
+echo "pgvector-link: linked pgvector ($home, Postgres $major) into $libdir and $extdir"

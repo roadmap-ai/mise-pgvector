@@ -1,0 +1,25 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.sublime-*
+
+# Temporary files
+*.tmp
+*.bak
+*.backup
+
+# Logs
+*.log
+
+# e2e sandbox: isolated mise data/cache, Postgres installs and clusters (tests/e2e.sh)
+.e2e/
+
+# Leftovers if share/unpack.sh is interrupted while run against a checkout
+.unpack.*
